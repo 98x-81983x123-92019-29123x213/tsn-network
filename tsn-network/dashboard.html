@@ -3,59 +3,34 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>The Secret Network - Access</title>
+  <title>The Secret Network - Main</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <canvas id="snow"></canvas>
-
   <div class="topbar">
     <h1>The Secret Network</h1>
   </div>
 
   <main class="center">
     <div class="card">
-      <h2>Enter Access Key</h2>
-      <input id="keyInput" placeholder="Enter key..." autocomplete="off" />
-      <button id="submitBtn">Unlock</button>
-      <p id="message" class="muted"></p>
+      <h2>Welcome, Agent</h2>
+      <p class="muted">Access granted to the Secret Network.</p>
+      <button id="logout">Log out</button>
     </div>
   </main>
 
   <script>
-    const submitBtn = document.getElementById('submitBtn');
-    const keyInput = document.getElementById('keyInput');
-    const message = document.getElementById('message');
-
-    async function unlock() {
-      message.textContent = 'Checking...';
-      const key = keyInput.value.trim();
-      try {
-        const res = await fetch('/api/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key })
-        });
-        const j = await res.json();
-        if (res.ok && j.ok) {
-          localStorage.setItem('tsn_access', 'granted');
-		window.location.href = "/dashboard.html";
-        } else {
-          message.textContent = j.message || 'Invalid key';
-          message.style.color = 'crimson';
-        }
-      } catch {
-        message.textContent = 'Network error';
-        message.style.color = 'crimson';
-      }
+    if (localStorage.getItem('tsn_access') !== 'granted') {
+      window.location.href = '/';
     }
 
-    submitBtn.addEventListener('click', unlock);
-    keyInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') unlock();
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('tsn_access');
+      window.location.href = '/';
     });
 
-    // --- SNOW ANIMATION ---
+    // --- same snow animation as the main page ---
     const canvas = document.getElementById('snow');
     const ctx = canvas.getContext('2d');
     let w, h, flakes;
